@@ -1,22 +1,17 @@
 import React, { Component } from "react";
-import DeleteBtn from "../components/DeleteBtn";
+// import DeleteBtn from "../components/DeleteBtn";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import { List, ListItem } from "../components/List";
-import { Input, TextArea, FormBtn } from "../components/Form";
-import axios from "axios";
+import { Input, FormBtn } from "../components/Form";
 
 
 class Books extends Component {
   state = {
     books: [],
     title: "",
-    author: "",
-    description: "",
-    image: "",
-    link: "",
   };
 
   // componentDidMount() {
@@ -37,15 +32,15 @@ class Books extends Component {
     });
   };
 
-  handleFormSubmit = event => {
+  handleSubmit = event => {
     event.preventDefault();
-    const term = event.target;
-    // const mykey = process.env.KEY || key
-    const queryURL = "https://www.googleapis.com/books/v1/volumes?q=" + term;
-    axios.get(queryURL)
-      .then(res => this.setState({ books: res.data, title: "", author: "", description: "", image: "", link: "" }))
-      .catch(err => console.log(err));
-  };
+    API.getAll(this.state.title).then(bookData => {
+      console.log(bookData.data.items);
+      this.setState({
+        books: bookData.data.items
+      });
+    });
+  }
 
   render() {
     return (
@@ -57,10 +52,10 @@ class Books extends Component {
             </Jumbotron>
             <form>
               <Input
-                value={this.state.title}
+                value={this.state.value}
                 onChange={this.handleInputChange}
                 name="title"
-                placeholder="Search Term (required)"
+                placeholder="Book Title(required)"
               />
 
               <FormBtn
@@ -70,16 +65,16 @@ class Books extends Component {
               </FormBtn>
             </form>
             <List>
-              {this.state.books.map(book => (
-                <ListItem key={book._id}>
-                  <Link to={"/books/" + book._id}>
-                    <strong>
-                      {book.title} by {book.author}
-                    </strong>
-                  </Link>
-                  <DeleteBtn onClick={() => this.deleteBook(book._id)} />
-                </ListItem>
-              ))}
+              {this.state.books.map(element =>
+                <ListItem
+                  key={element.volumeInfo.id}
+                  title={element.volumeInfo.title}
+                  author={element.volumeInfo.hasOwnProperty("authors") ? element.volumeInfo.authors.join(",") : ""}
+                  description={element.volumeInfo.description}
+                  image={element.volumeInfo.imageLinks.thumbnail}
+                  link={element.volumeInfo.previewLink}
+                />
+              )}
             </List>
           </Col>
         </Row>

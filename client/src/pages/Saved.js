@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { List, ListItem } from "../components/List";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
@@ -51,7 +51,7 @@ class Detail extends Component {
             <List>
               {this.state.books.map(book => (
                 <ListItem key={book._id}>
-                  <p><img src={book.image} /></p>
+                  <p><img alt={book.image} src={book.image} /></p>
                   <strong>
                     {book.title} by {book.authors}
                   </strong>
