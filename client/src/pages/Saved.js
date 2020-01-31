@@ -8,15 +8,24 @@ import DeleteBtn from "../components/DeleteBtn"
 
 class Detail extends Component {
   state = {
-    book: {}
+    books: [],
+    title: "",
+    authors: "",
+    description: "",
+    image: "",
+    link: "",
   };
   // Add code to get the book with an _id equal to the id in the route param
   // e.g. http://localhost:3000/books/:id
   // The book id for this route can be accessed using this.props.match.params.id
   componentDidMount = () => {
-    API.getBook(this.props.match.params.id)
+    this.loadBooks();
+  };
+
+  loadBooks = () => {
+    API.getBooks()
       .then(res =>
-        this.setState({ book: res.data })
+        this.setState({ books: res.data, title: "", authors: "", synopsis: "" })
       )
       .catch(err => console.log(err));
   };
@@ -33,24 +42,25 @@ class Detail extends Component {
         <Row>
           <Col size="md-12">
             <Jumbotron>
-              <h1>
-                {this.state.book.title} by {this.state.book.author}
-              </h1>
+              <h1>Saved Books!</h1>
             </Jumbotron>
           </Col>
         </Row>
         <Row>
           <Col size="md-10 md-offset-1">
-            <article>
-              <h1>Description</h1>
-              <p>{this.state.book.description}</p>
-            </article>
-          </Col>
-        </Row>
-        <Row>
-          <Col size="md-2">
-            <Link to="/">← Back to Authors</Link>
-            <DeleteBtn onClick={() => this.deleteBook(this.state.book._id)} />
+            <List>
+              {this.state.books.map(book => (
+                <ListItem key={book._id}>
+                  <p><img src={book.image} /></p>
+                  <strong>
+                    {book.title} by {book.authors}
+                  </strong>
+                  <p> {book.description} </p>
+                  <p> <a href={book.link}>Click here for google books</a></p>
+                  Remove Book<DeleteBtn onClick={() => this.deleteBook(book._id)} />
+                </ListItem>
+              ))}
+            </List>
           </Col>
         </Row>
       </Container>
