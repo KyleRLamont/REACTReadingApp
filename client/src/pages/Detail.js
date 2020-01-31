@@ -1,8 +1,10 @@
 import React, { Component } from "react";
+import { List, ListItem } from "../components/List";
 import { Link } from "react-router-dom";
 import { Col, Row, Container } from "../components/Grid";
 import Jumbotron from "../components/Jumbotron";
 import API from "../utils/API";
+import DeleteBtn from "../components/DeleteBtn"
 
 class Detail extends Component {
   state = {
@@ -16,6 +18,12 @@ class Detail extends Component {
       .then(res =>
         this.setState({ book: res.data })
       )
+      .catch(err => console.log(err));
+  };
+
+  deleteBook = id => {
+    API.deleteBook(id)
+      .then(res => this.loadBooks())
       .catch(err => console.log(err));
   };
 
@@ -34,7 +42,7 @@ class Detail extends Component {
         <Row>
           <Col size="md-10 md-offset-1">
             <article>
-              <h1>Synopsis</h1>
+              <h1>Description</h1>
               <p>{this.state.book.description}</p>
             </article>
           </Col>
@@ -42,6 +50,7 @@ class Detail extends Component {
         <Row>
           <Col size="md-2">
             <Link to="/">← Back to Authors</Link>
+            <DeleteBtn onClick={() => this.deleteBook(this.state.book._id)} />
           </Col>
         </Row>
       </Container>
